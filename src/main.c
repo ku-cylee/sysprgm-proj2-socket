@@ -4,21 +4,16 @@
 #include "unistd.h"
 #include "pthread.h"
 
+#include "socket-manager.h"
+
 #define PORT_MAX 10
 #define INPUT_MAX 64
-
-void *create_socket(void *arg) {
-	int port = (int)arg;
-	printf("Open Port #%d\n", port);
-	sleep(3);
-	printf("Close Port #%d\n", port);
-}
 
 void manage_ports (int *ports, int port_size) {
 	int idx;
 	pthread_t pids[PORT_MAX];
 	for (idx = 0; idx < port_size; idx++) {
-		pthread_create(&pids[idx], NULL, &create_socket, (void *)ports[idx]);
+		pthread_create(&pids[idx], NULL, &socket_main, (void *)ports[idx]);
 	}
 
 	for (idx = 0; idx < port_size; idx++) pthread_join(pids[idx], NULL);
