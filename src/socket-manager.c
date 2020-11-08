@@ -22,21 +22,27 @@ void count_end_sign(const char * const buf, size_t len, int *count) {
 	}
 }
 
+int read_iter(int fd, int *endsign_cnt, FILE *logger) {
+	size_t msg_size;
+	char buffer[BUFFER_SIZE];
+
+	memset(buffer, 0x00, sizeof(buffer));
+	msg_size = read(fd, buffer, BUFFER_SIZE);
+	if (msg_size <= 0) return -1;
+
+	count_end_sign(buffer, msg_size, endsign_cnt);
+	if (*endsign_cnt >= ENDSIGN_LEN) return -1;
+
+	write_log(logger, msg_size, buffer);
+	return 0;
+}
+
 void read_from_server(int fd, int port) {
 	int endsign_cnt = 0;
-	char buffer[BUFFER_SIZE] = { 0 };
-	size_t msg_size;
 	FILE *fp = open_log(fd, port);
 	if (fp == NULL) return;
 
-	memset(buffer, 0x00, sizeof(buffer));
-	while ((msg_size = read(fd, buffer, BUFFER_SIZE)) > 0) {
-		count_end_sign(buffer, msg_size, &endsign_cnt);
-		if (endsign_cnt >= 5) break;
-
-		write_log(fp, msg_size, buffer);
-		memset(buffer, 0x00, sizeof(buffer));
-	}
+	while (read_iter(fd, &endsign_cnt, fp) == 0);
 	close_log(fp);
 }
 
