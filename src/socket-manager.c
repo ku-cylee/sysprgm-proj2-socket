@@ -38,8 +38,9 @@ void read_from_server(int fd, int port) {
 	close_log(fp);
 }
 
-int connect_socket(int fd, struct sockaddr_in *sv_addr) {
+int connect_socket(int fd, int port, struct sockaddr_in *sv_addr) {
 	int res = connect(fd, (struct sockaddr *)sv_addr, sizeof(*sv_addr));
+	if (res < 0) fprintf(stderr, "failed to connect through port %d\n", port);
 	return res;
 }
 
@@ -52,6 +53,7 @@ void set_server_addr(struct sockaddr_in *sv_addr, int port) {
 
 int create_socket() {
 	int fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (fd < 0) fprintf(stderr, "failed to create stream socket\n");
 	return fd;
 }
 
@@ -60,8 +62,12 @@ void *socket_main(void *arg) {
 	struct sockaddr_in sv_addr;
 
 	int client_fd = create_socket();
+	if (client_fd < 0) return ;
+
 	set_server_addr(&sv_addr, port);
-	int connected = connect_socket(client_fd, &sv_addr);
-	read_from_server(client_fd, port);
+
+	int connection = connect_socket(client_fd, port, &sv_addr);
+	if (connection == 0) read_from_server(client_fd, port);
+
 	close(client_fd);
 }

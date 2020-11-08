@@ -11,7 +11,7 @@
 
 FILE *open_log(int fd, int port) {
 	if (mkdir(LOG_DIR, 0776) < 0 && errno != EEXIST) {
-		fprintf(stderr, "Unable to create log folder");
+		fprintf(stderr, "failed to create log folder");
 		return NULL;
 	}
 

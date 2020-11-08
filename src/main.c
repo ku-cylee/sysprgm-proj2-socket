@@ -18,12 +18,12 @@ void manage_sockets(int *ports, int port_size) {
 
 	for (idx = 0; idx < port_size; idx++) pthread_join(pids[idx], NULL);
 
-	printf("close\n");
+	fprintf(stdout, "close\n");
 }
 
 void print_ports(int *ports, int port_size) {
 	int idx;
-	printf("open:");
+	fprintf(stdout, "open:");
 	for (idx = 0; idx < port_size; idx++) printf(" %d", ports[idx]);
 	printf("\n");
 }
