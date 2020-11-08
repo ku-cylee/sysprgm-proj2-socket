@@ -10,27 +10,29 @@
 #include "socket-manager.h"
 #include "logger.h"
 
+#define ENDSIGN_LEN 5
 #define BUFFER_SIZE 512
 #define SERVER_ADDR "192.168.56.101"
 
-int atsign_counting(const char * const buf, size_t len) {
-	int i, n = 0;
-	for (i = 0; i < len; i++) {
-		if (buf[i] == '@') n++;
+void count_end_sign(const char * const buf, size_t len, int *count) {
+	int idx;
+	for (idx = 0; idx < len && *count < ENDSIGN_LEN; idx++) {
+		if (buf[idx] == '@') (*count)++;
+		else *count = 0;
 	}
-	return n;
 }
 
 void read_from_server(int fd, int port) {
-	int msg_size, atsign_count = 0;
+	int endsign_cnt = 0;
 	char buffer[BUFFER_SIZE] = { 0 };
+	size_t msg_size;
 	FILE *fp = open_log(fd, port);
 	if (fp == NULL) return;
 
 	memset(buffer, 0x00, sizeof(buffer));
 	while ((msg_size = read(fd, buffer, BUFFER_SIZE)) > 0) {
-		atsign_count += atsign_counting(buffer, msg_size);
-		if (atsign_count >= 5) break;
+		count_end_sign(buffer, msg_size, &endsign_cnt);
+		if (endsign_cnt >= 5) break;
 
 		write_log(fp, msg_size, buffer);
 		memset(buffer, 0x00, sizeof(buffer));
