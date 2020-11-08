@@ -1,8 +1,17 @@
+CC = gcc
+CFLAGS = -lpthread
+MKDIR = mkdir -p bin
+SRCS = src/*.c
+OBJECTS = bin/*.o
+TARGET = bin/client.out
+
 all : src/*.c src/*.h
-	gcc src/*.c -o bin/client.out -lpthread
+	$(MKDIR)
+	$(CC) $(SRCS) -o $(TARGET) $(CFLAGS)
 
 debug : src/*.c src/*.h
-	gcc src/*.c -o bin/client.out -lpthread -g
+	$(MKDIR)
+	$(CC) $(SRCS) -o $(TARGET) $(CFLAGS) -g
 
 clean :
-	rm -f bin/*.o bin/*.out
+	rm -f $(OBJECTS) $(TARGET)

@@ -29,7 +29,7 @@ void print_ports(int *ports, int port_size) {
 }
 
 int get_ports(int *ports) {
-	int idx, port_cnt, port_size;
+	int idx, port_size;
 	char input[INPUT_MAX], *ptr;
 
 	if (fgets(input, INPUT_MAX, stdin) < 0) {
