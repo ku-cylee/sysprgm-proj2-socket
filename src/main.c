@@ -1,9 +1,29 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "unistd.h"
+#include "pthread.h"
 
 #define PORT_MAX 10
 #define INPUT_MAX 64
+
+void *create_socket(void *arg) {
+	int port = (int)arg;
+	printf("Open Port #%d\n", port);
+	sleep(3);
+	printf("Close Port #%d\n", port);
+}
+
+void manage_ports (int *ports, int port_size) {
+	int idx;
+	pthread_t pids[PORT_MAX];
+	for (idx = 0; idx < port_size; idx++) {
+		pthread_create(&pids[idx], NULL, &create_socket, (void *)ports[idx]);
+	}
+
+	for (idx = 0; idx < port_size; idx++) pthread_join(pids[idx], NULL);
+	printf("Multithreading Terminated\n");
+}
 
 int get_ports(int *ports) {
 	int idx, port_cnt, port_size;
@@ -25,11 +45,9 @@ int get_ports(int *ports) {
 }
 
 int main(int argc, char *argv[]) {
-	int idx, port_size, ports[PORT_MAX];
+	int port_size, ports[PORT_MAX];
 	port_size = get_ports(ports);
-
-	for (idx = 0; idx < port_size; idx++) printf("%d ", ports[idx]);
-	printf("\n");
+	manage_ports(ports, port_size);
 
 	return 0;
 }
