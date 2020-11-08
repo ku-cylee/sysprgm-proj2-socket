@@ -21,12 +21,11 @@ FILE *open_log(int fd, int port) {
 }
 
 void write_log(FILE *fp, int msg_size, char *buffer) {
-	time_t now;
-	time(&now);
-	struct tm *t = (struct tm *)localtime(&now);
-
 	struct timeb tbuf;
 	ftime(&tbuf);
+	time_t now = tbuf.time;
+
+	struct tm *t = (struct tm *)localtime(&now);
 
 	fprintf(fp, "%02d:%02d:%02d.%03d|%d|%s\n", t->tm_hour, t->tm_min, t->tm_sec, tbuf.millitm, msg_size, buffer);
 }
