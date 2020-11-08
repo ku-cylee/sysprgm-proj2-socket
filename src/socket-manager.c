@@ -1,13 +1,14 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "time.h"
-#include "sys/timeb.h"
+#include "unistd.h"
+#include "arpa/inet.h"
 #include "sys/types.h"
 #include "sys/socket.h"
 #include "netinet/in.h"
 
 #include "socket-manager.h"
+#include "logger.h"
 
 #define BUFFER_SIZE 512
 #define SERVER_ADDR "192.168.56.101"
@@ -22,33 +23,18 @@ int atsign_counting(const char * const buf, size_t len) {
 
 void read_from_server(int fd, int port) {
 	int msg_size, atsign_count = 0;
-	char filename[32] = { 0 }, buffer[BUFFER_SIZE] = { 0 };
-	FILE *fp;
-
-	printf("Connected to port #%d\n", port);
-	sprintf(filename, "../logs/%d-%d.txt", port, fd);
-	printf("Filename: %s\n", filename);
-
-	fp = fopen(filename, "a");
+	char buffer[BUFFER_SIZE] = { 0 };
+	FILE *fp = open_log(fd, port);
 
 	memset(buffer, 0x00, sizeof(buffer));
 	while ((msg_size = read(fd, buffer, BUFFER_SIZE)) > 0) {
 		atsign_count += atsign_counting(buffer, msg_size);
 		if (atsign_count >= 5) break;
-		
-		time_t tnow;
-		time(&tnow);
-		struct tm *t = (struct tm *)localtime(&tnow);
-		
-		struct timeb timebuffer;
-		ftime(&timebuffer);
-		int ms = timebuffer.millitm;
-		fprintf(fp, "%02d:%02d:%02d.%03d|%d|%s\n", t->tm_hour, t->tm_min, t->tm_sec, ms, msg_size, buffer);
 
+		write_log(fp, msg_size, buffer);
 		memset(buffer, 0x00, sizeof(buffer));
 	}
-
-	fclose(fp);
+	close_log(fp);
 }
 
 int connect_socket(int fd, struct sockaddr_in *sv_addr) {
@@ -76,5 +62,5 @@ void *socket_main(void *arg) {
 	set_server_addr(&sv_addr, port);
 	int connected = connect_socket(client_fd, &sv_addr);
 	read_from_server(client_fd, port);
-	close(client_fd);		
+	close(client_fd);
 }
