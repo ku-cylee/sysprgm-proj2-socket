@@ -52,7 +52,7 @@ void read_from_server(int fd, int port) {
 }
 
 int connect_socket(int fd, struct sockaddr_in *sv_addr) {
-	int res = connect(fd, (struct sockaddr *)sv_addr, sizeof(sv_addr));
+	int res = connect(fd, (struct sockaddr *)sv_addr, sizeof(*sv_addr));
 	return res;
 }
 
