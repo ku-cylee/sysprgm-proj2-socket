@@ -25,6 +25,7 @@ void read_from_server(int fd, int port) {
 	int msg_size, atsign_count = 0;
 	char buffer[BUFFER_SIZE] = { 0 };
 	FILE *fp = open_log(fd, port);
+	if (fp == NULL) return;
 
 	memset(buffer, 0x00, sizeof(buffer));
 	while ((msg_size = read(fd, buffer, BUFFER_SIZE)) > 0) {

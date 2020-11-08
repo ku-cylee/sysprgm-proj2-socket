@@ -32,8 +32,9 @@ int get_ports(int *ports) {
 	int idx, port_size;
 	char input[INPUT_MAX], *ptr;
 
+	fprintf(stdout, "input: ");
 	if (fgets(input, INPUT_MAX, stdin) < 0) {
-		printf("failed: reading ports");
+		fprintf(stdout, "failed: reading ports");
 		return -1;
 	}
 
@@ -48,11 +49,13 @@ int get_ports(int *ports) {
 }
 
 int main(int argc, char *argv[]) {
-	int port_size, ports[PORT_MAX];
-	port_size = get_ports(ports);
-	if (port_size < -1) return 0;
-	print_ports(ports, port_size);
-	manage_sockets(ports, port_size);
+	while (1) {
+		int port_size, ports[PORT_MAX];
+		port_size = get_ports(ports);
+		if (port_size < -1) continue;
+		print_ports(ports, port_size);
+		manage_sockets(ports, port_size);
+	}
 
 	return 0;
 }
