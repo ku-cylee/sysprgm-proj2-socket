@@ -27,7 +27,7 @@ int read_iter(int fd, int *endsign_cnt, FILE *logger) {
 	char buffer[BUFFER_SIZE];
 
 	memset(buffer, 0x00, sizeof(buffer));
-	msg_size = read(fd, buffer, BUFFER_SIZE);
+	msg_size = read(fd, buffer, sizeof(buffer));
 	if (msg_size <= 0) return -1;
 
 	write_log(logger, msg_size, buffer);
