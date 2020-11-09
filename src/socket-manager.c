@@ -30,11 +30,10 @@ int read_iter(int fd, int *endsign_cnt, FILE *logger) {
 	msg_size = read(fd, buffer, BUFFER_SIZE);
 	if (msg_size <= 0) return -1;
 
-	count_end_sign(buffer, msg_size, endsign_cnt);
-	if (*endsign_cnt >= ENDSIGN_LEN) return -1;
-
 	write_log(logger, msg_size, buffer);
-	return 0;
+
+	count_end_sign(buffer, msg_size, endsign_cnt);
+	return (*endsign_cnt < ENDSIGN_LEN) ? 0 : -1;
 }
 
 void read_from_server(int fd, int port) {
