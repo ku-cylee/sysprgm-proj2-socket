@@ -27,7 +27,8 @@ void write_log(FILE *fp, int msg_size, char *buffer) {
 
 	struct tm *t = (struct tm *)localtime(&now);
 
-	fprintf(fp, "%02d:%02d:%02d.%03d|%d|%s\n", t->tm_hour, t->tm_min, t->tm_sec, tbuf.millitm, msg_size, buffer);
+	fprintf(fp, "%02d:%02d:%02d.%03d|%d|%s\n",
+			t->tm_hour, t->tm_min, t->tm_sec, tbuf.millitm, msg_size, buffer);
 }
 
 void close_log(FILE *fp) {

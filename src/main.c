@@ -41,7 +41,8 @@ int get_ports(int *ports) {
 	ptr = strtok(input, " ");
 	port_size = atoi(ptr);
 
-	for (idx = 0, ptr = strtok(NULL, " "); idx < port_size && ptr != NULL; idx++, ptr = strtok(NULL, " ")) {
+	for (idx = 0, ptr = strtok(NULL, " ");
+		 idx < port_size && ptr != NULL; idx++, ptr = strtok(NULL, " ")) {
 		ports[idx] = atoi(ptr);
 	}
 

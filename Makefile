@@ -3,7 +3,7 @@ CFLAGS = -lpthread
 MKDIR = mkdir -p bin
 SRCS = src/*.c
 OBJECTS = bin/*.o
-TARGET = bin/client.out
+TARGET = bin/2018320156_client
 
 all : src/*.c src/*.h
 	$(MKDIR)
