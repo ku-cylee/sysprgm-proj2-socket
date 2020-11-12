@@ -40,6 +40,7 @@ int get_ports(int *ports) {
 
 	ptr = strtok(input, " ");
 	port_size = atoi(ptr);
+	if (port_size > PORT_MAX) port_size = PORT_MAX;
 
 	for (idx = 0, ptr = strtok(NULL, " ");
 		 idx < port_size && ptr != NULL; idx++, ptr = strtok(NULL, " ")) {
